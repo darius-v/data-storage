@@ -36,7 +36,7 @@ class ItemService
         $item = $this->itemRepository->findUserItemById($user, $id);
 
         if (null === $item) {
-            throw new NotFoundHttpException(); // todo test
+            throw new NotFoundHttpException();
         }
 
         $item->setData($data);

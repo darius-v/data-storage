@@ -7,6 +7,7 @@ namespace App\Controller;
 use App\Entity\Item;
 use App\Service\ItemService;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -41,7 +42,6 @@ class ItemController extends AbstractController
      */
     public function create(Request $request, ItemService $itemService)
     {
-        print_r($_POST);die;
         $data = $request->get('data');
 
         if (empty($data)) {
@@ -93,7 +93,11 @@ class ItemController extends AbstractController
             return $this->errorJson('No data parameter');
         }
 
-        $itemService->update($this->getUser(), $id, $data);
+        try {
+            $itemService->update($this->getUser(), $id, $data);
+        } catch (NotFoundHttpException $e) {
+            return $this->errorJson('Item not found');
+        }
 
         return $this->json([]);
     }
