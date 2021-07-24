@@ -79,7 +79,9 @@ class ItemControllerTest extends WebTestCase
 
         $client->request('PUT', '/item', $updatedItemData);
 
-        $this->assertStringContainsString('very secure updated item data', $client->getResponse()->getContent());
+        $updatedItem = $this->getItemRepository()->find($item->getId());
+
+        $this->assertEquals($data, $updatedItem->getData());
     }
 
     private function createUser(): User
@@ -99,5 +101,10 @@ class ItemControllerTest extends WebTestCase
         $em = static::$container->get(EntityManagerInterface::class);
         $em->remove($user);
         $em->flush();
+    }
+
+    private function getItemRepository(): ItemRepository
+    {
+        return static::$container->get(ItemRepository::class);
     }
 }
