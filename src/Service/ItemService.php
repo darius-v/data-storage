@@ -44,4 +44,10 @@ class ItemService
 
         return $item;
     }
+
+    public function delete(Item $item): void
+    {
+        $this->entityManager->remove($item);
+        $this->entityManager->flush();
+    }
 } 

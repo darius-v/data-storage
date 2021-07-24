@@ -16,6 +16,14 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ItemController extends AbstractController
 {
+    /** @var ItemService */
+    private $itemService;
+
+    public function __construct(ItemService $itemService)
+    {
+        $this->itemService = $itemService;
+    }
+
     /**
      * @Route("/item", name="item_list", methods={"GET"})
      * @IsGranted("ROLE_USER")
@@ -63,15 +71,13 @@ class ItemController extends AbstractController
             return $this->json(['error' => 'No data parameter'], Response::HTTP_BAD_REQUEST);
         }
 
-        $item = $this->getDoctrine()->getRepository(Item::class)->find($id);
+        $item = $this->getDoctrine()->getRepository(Item::class)->findUserItemById($this->getUser(), $id);
 
         if ($item === null) {
             return $this->json(['error' => 'No item'], Response::HTTP_BAD_REQUEST);
         }
 
-        $manager = $this->getDoctrine()->getManager();
-        $manager->remove($item);
-        $manager->flush();
+        $this->itemService->delete($item);
 
         return $this->json([]);
     }
