@@ -40,7 +40,22 @@ class ItemControllerTest extends WebTestCase
         $this->assertNotNull($newItem);
     }
 
-    private function update(Item $item, KernelBrowser $client, ItemRepository $itemRepository): void
+//    public function testDoesNotDeleteOtherUserItem(): void
+//    {
+//        $client = static::createClient();
+//
+//        $userRepository = static::$container->get(UserRepository::class);
+//        /** @var ItemRepository $itemRepository */
+//        $itemRepository = static::$container->get(ItemRepository::class);
+//
+//        $user = $userRepository->findOneByUsername('john');
+//
+//        $client->loginUser($user);
+//
+//        $client->request('DELETE', '/item/' . $id, $updatedItemData);
+//    }
+
+    private function update(Item $item, KernelBrowser $client): void
     {
         $data = 'very secure updated item data';
 
@@ -48,11 +63,6 @@ class ItemControllerTest extends WebTestCase
 
         $client->request('PUT', '/item', $updatedItemData);
 
-        /** @var Item $updatedItem */
-        $updatedItem = $itemRepository->find($item->getId());
-
-//        var_dump($updatedItem); die;
-
-        $this->assertEquals($data, $updatedItem->getData());
+        $this->assertStringContainsString('very secure updated item data', $client->getResponse()->getContent());
     }
 }

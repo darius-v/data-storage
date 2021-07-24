@@ -31,7 +31,7 @@ class ItemService
         $this->entityManager->flush();
     }
 
-    public function update(UserInterface $user, string $id, string $data): void
+    public function update(UserInterface $user, string $id, string $data): Item
     {
         $item = $this->itemRepository->findUserItemById($user, $id);
 
@@ -41,5 +41,7 @@ class ItemService
 
         $item->setData($data);
         $this->entityManager->flush();
+
+        return $item;
     }
 } 

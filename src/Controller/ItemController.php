@@ -57,7 +57,7 @@ class ItemController extends AbstractController
      * @Route("/item/{id}", name="items_delete", methods={"DELETE"})
      * @IsGranted("ROLE_USER")
      */
-    public function delete(Request $request, int $id)
+    public function delete(int $id): JsonResponse
     {
         if (empty($id)) {
             return $this->json(['error' => 'No data parameter'], Response::HTTP_BAD_REQUEST);
@@ -94,12 +94,12 @@ class ItemController extends AbstractController
         }
 
         try {
-            $itemService->update($this->getUser(), $id, $data);
+            $item = $itemService->update($this->getUser(), $id, $data);
         } catch (NotFoundHttpException $e) {
             return $this->errorJson('Item not found');
         }
 
-        return $this->json([]);
+        return $this->json(['id' => $item->getId(), 'data' => $item->getData()]);
     }
 
     private function errorJson(string $message): JsonResponse
