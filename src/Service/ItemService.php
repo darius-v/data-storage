@@ -21,6 +21,30 @@ class ItemService
         $this->itemRepository = $itemRepository;
     }
 
+    public function list(UserInterface $user): array
+    {
+
+
+//        for ($i=0; $i<10000; $i++) {
+
+            $items = $this->itemRepository->findByUser($user);
+
+//            dump($items);
+
+            $allItems = [];
+            foreach ($items as $item) {
+                $oneItem['id'] = $item['id'];
+                $oneItem['data'] = $item['data'];
+                $oneItem['created_at'] = $item['created_at'];
+                $oneItem['updated_at'] = $item['updated_at'];
+                $allItems[] = $oneItem;
+            }
+
+//        }
+
+        return $allItems;
+    }
+
     public function create(UserInterface $user, string $data): void
     {
         $item = new Item();

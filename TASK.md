@@ -2,7 +2,8 @@
 
 ### TASK
 
-The API is down and our customer support team is receiving a storm of complaints, especially on Reddit. You're the only guy who can solve this problem. Here's what you have to do to fix the situation:
+The API is down and our customer support team is receiving a storm of complaints, especially on Reddit. 
+You're the only guy who can solve this problem. Here's what you have to do to fix the situation:
 
 * First of all - make API work (also, fix tests);
 * Add item update endpoint - it should update user's item;

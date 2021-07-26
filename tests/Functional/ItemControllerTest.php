@@ -33,14 +33,27 @@ class ItemControllerTest extends WebTestCase
         $client->request('GET', '/item');
 
         $this->assertResponseIsSuccessful();
-        $this->assertStringContainsString('very secure new item data', $client->getResponse()->getContent());
+
+        $content = $client->getResponse()->getContent();
+
+        $this->assertStringContainsString('very secure new item data', $content);
+
+        $listArray = json_decode($content);
+        dump($listArray);
+
 
         /** @var Item $newItem */
-        $newItem = $itemRepository->findOneByData($data);
+        $newItem = $itemRepository->findOneByData($data);   // todo finds wrong item when data is equal of other items
 
-        $this->update($newItem, $client);
+        $id = $this->update($newItem, $client);
 
         $this->assertNotNull($newItem);
+
+        $client->request('DELETE', '/item/' . $id);
+        $this->assertResponseIsSuccessful();
+
+        $itemRepository->clear();
+        $this->assertNull($itemRepository->find($id));
     }
 
     public function testDoesNotDeleteOtherUserItem(): void
@@ -71,7 +84,7 @@ class ItemControllerTest extends WebTestCase
         $this->assertNotNull($johnItem->getId()); // when deletes - getId returns null
     }
 
-    private function update(Item $item, KernelBrowser $client): void
+    private function update(Item $item, KernelBrowser $client): int
     {
         $data = 'very secure updated item data';
 
@@ -82,6 +95,8 @@ class ItemControllerTest extends WebTestCase
         $updatedItem = $this->getItemRepository()->find($item->getId());
 
         $this->assertEquals($data, $updatedItem->getData());
+
+        return $item->getId();
     }
 
     private function createUser(): User
@@ -98,7 +113,7 @@ class ItemControllerTest extends WebTestCase
 
     private function deleteUser(User $user): void
     {
-        $em = static::$container->get(EntityManagerInterface::class);
+        $em = $this->getEntityManager();
         $em->remove($user);
         $em->flush();
     }
@@ -106,5 +121,10 @@ class ItemControllerTest extends WebTestCase
     private function getItemRepository(): ItemRepository
     {
         return static::$container->get(ItemRepository::class);
+    }
+
+    private function getEntityManager(): EntityManagerInterface
+    {
+        return static::$container->get(EntityManagerInterface::class);
     }
 }

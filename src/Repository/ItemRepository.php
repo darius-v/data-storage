@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Item;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -23,5 +24,20 @@ class ItemRepository extends ServiceEntityRepository
     public function findUserItemById(UserInterface $user, int $id): ?Item
     {
         return $this->findOneBy(['user' => $user, 'id' => $id]);
+    }
+
+    /**
+     * @param UserInterface|User $user
+     */
+    public function findByUser(UserInterface $user): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = "SELECT * FROM item WHERE user_id = :userId";
+        $stmt = $conn->prepare($sql);
+//        $stmt->bindValue(, $id);
+        $stmt->execute(['userId' => $user->getId()]);
+
+        return $stmt->fetchAllAssociative();
     }
 }

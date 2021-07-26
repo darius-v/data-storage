@@ -30,16 +30,24 @@ class ItemController extends AbstractController
      */
     public function list(): JsonResponse
     {
-        $items = $this->getDoctrine()->getRepository(Item::class)->findBy(['user' => $this->getUser()]);
 
-        $allItems = [];
-        foreach ($items as $item) {
-            $oneItem['id'] = $item->getId();
-            $oneItem['data'] = $item->getData();
-            $oneItem['created_at'] = $item->getCreatedAt();
-            $oneItem['updated_at'] = $item->getUpdatedAt();
-            $allItems[] = $oneItem;
-        }
+            $items = $this->getDoctrine()->getRepository(Item::class)->findBy(['user' => $this->getUser()]);
+            $allItems = [];
+            foreach ($items as $item) {
+                $oneItem['id'] = $item->getId();
+                $oneItem['data'] = $item->getData();
+                $oneItem['created_at'] = $item->getCreatedAt();
+                $oneItem['updated_at'] = $item->getUpdatedAt();
+                $allItems[] = $oneItem;
+            }
+
+//        $allItems = $this->itemService->list($this->getUser());
+
+
+//        $end = time();
+
+//        return $this->json(['time' => $end - $start]);
+
 
         return $this->json($allItems);
     }
@@ -48,7 +56,7 @@ class ItemController extends AbstractController
      * @Route("/item", name="item_create", methods={"POST"})
      * @IsGranted("ROLE_USER")
      */
-    public function create(Request $request, ItemService $itemService)
+    public function create(Request $request, ItemService $itemService): JsonResponse
     {
         $data = $request->get('data');
 
