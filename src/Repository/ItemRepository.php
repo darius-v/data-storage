@@ -48,4 +48,11 @@ class ItemRepository extends ServiceEntityRepository
         $stmt = $conn->prepare($sql);
         $stmt->execute(['userId' => $userId, 'data' => $data, 'createdAt' => $createdAt, 'updatedAt' => $createdAt]);
     }
+
+    public function updateItem(int $userId, string $id, string $data, string $updatedAt)
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $conn->update('item', ['data' => $data, 'updated_at' => $updatedAt], ['id' => $id, 'user_id' => $userId]);
+    }
 }

@@ -17,7 +17,7 @@ class ItemControllerTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $userRepository = static::$container->get(UserRepository::class);
+        $userRepository = $this->getUserRepository();
 
         $user = $userRepository->findOneByUsername('john');
         $client->loginUser($user);
@@ -93,6 +93,11 @@ class ItemControllerTest extends WebTestCase
     private function getItemRepository(): ItemRepository
     {
         return static::$container->get(ItemRepository::class);
+    }
+
+    private function getUserRepository(): UserRepository
+    {
+        return static::$container->get(UserRepository::class);
     }
 
     private function getEntityManager(): EntityManagerInterface

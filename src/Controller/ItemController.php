@@ -7,7 +7,6 @@ namespace App\Controller;
 use App\Entity\Item;
 use App\Service\ItemService;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -92,13 +91,9 @@ class ItemController extends AbstractController
             return $this->errorJson('No data parameter');
         }
 
-        try {
-            $item = $itemService->update($this->getUser(), $id, $data);
-        } catch (NotFoundHttpException $e) {
-            return $this->errorJson('Item not found');
-        }
+        $itemService->update($this->getUser(), $id, $data);
 
-        return $this->json(['id' => $item->getId(), 'data' => $item->getData()]);
+        return $this->json(['id' => $this->getUser(), $id, $data, 'data' => $data]);
     }
 
     private function errorJson(string $message): JsonResponse

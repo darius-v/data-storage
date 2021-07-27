@@ -7,7 +7,6 @@ use App\Entity\User;
 use App\Repository\ItemRepository;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class ItemService
@@ -42,26 +41,23 @@ class ItemService
     public function create(UserInterface $user, string $data): void
     {
         /** @var User $user */
-        $this->itemRepository->create($user->getId(), $data, (new DateTime())->format('Y-m-d H:i:s'));
+        $this->itemRepository->create($user->getId(), $data, $this->now());
     }
 
-    public function update(UserInterface $user, string $id, string $data): Item
+    public function update(UserInterface $user, string $id, string $data): void
     {
-        $item = $this->itemRepository->findUserItemById($user, $id);
-
-        if (null === $item) {
-            throw new NotFoundHttpException();
-        }
-
-        $item->setData($data);
-        $this->entityManager->flush();
-
-        return $item;
+        /** @var User $user */
+        $this->itemRepository->updateItem($user->getId(), $id, $data, $this->now());
     }
 
     public function delete(Item $item): void
     {
         $this->entityManager->remove($item);
         $this->entityManager->flush();
+    }
+
+    private function now(): string
+    {
+        return (new DateTime())->format('Y-m-d H:i:s');
     }
 } 
