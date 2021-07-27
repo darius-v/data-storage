@@ -48,6 +48,7 @@ class ItemController extends AbstractController
             return $this->json(['error' => 'No data parameter']);
         }
 
+        // 1000 iterations: 19s with doctrine, 6s with plain sql
         $itemService->create($this->getUser(), $data);
 
         return $this->json([]);

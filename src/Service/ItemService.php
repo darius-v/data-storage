@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Entity\Item;
+use App\Entity\User;
 use App\Repository\ItemRepository;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
@@ -40,12 +41,8 @@ class ItemService
 
     public function create(UserInterface $user, string $data): void
     {
-        $item = new Item();
-        $item->setUser($user);
-        $item->setData($data);
-
-        $this->entityManager->persist($item);
-        $this->entityManager->flush();
+        /** @var User $user */
+        $this->itemRepository->create($user->getId(), $data, (new DateTime())->format('Y-m-d H:i:s'));
     }
 
     public function update(UserInterface $user, string $id, string $data): Item

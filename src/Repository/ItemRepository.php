@@ -39,4 +39,13 @@ class ItemRepository extends ServiceEntityRepository
 
         return $stmt->fetchAllAssociative();
     }
+
+    public function create(int $userId, string $data, string $createdAt)
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = "INSERT INTO item (user_id, data, created_at, updated_at) VALUES (:userId, :data, :createdAt, :updatedAt)";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute(['userId' => $userId, 'data' => $data, 'createdAt' => $createdAt, 'updatedAt' => $createdAt]);
+    }
 }
