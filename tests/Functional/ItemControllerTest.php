@@ -18,43 +18,14 @@ class ItemControllerTest extends WebTestCase
         $client = static::createClient();
 
         $userRepository = static::$container->get(UserRepository::class);
-        /** @var ItemRepository $itemRepository */
-        $itemRepository = static::$container->get(ItemRepository::class);
 
         $user = $userRepository->findOneByUsername('john');
-
         $client->loginUser($user);
-        
-        $data = 'very secure new item data';
 
-        $newItemData = ['data' => $data];
-
-        $latestItem = $this->findLatestItem();
-
-        $client->request('POST', '/item', $newItemData);
-
-        $newItem = $this->findLatestItem();
-
-        // checking if data is equal to what we posted is not enough, because older items could have same data.
-        // so checking if really new item with data was created
-        $this->assertTrue($newItem->getId() > $latestItem->getId());
-        $this->assertEquals($data, $newItem->getData());
-
-        $client->request('GET', '/item');
-
-        $this->assertResponseIsSuccessful();
-
-        $content = $client->getResponse()->getContent();
-
-        $this->assertStringContainsString('very secure new item data', $content);
-
-        $id = $this->update($newItem, $client);
-
-        $client->request('DELETE', '/item/' . $id);
-        $this->assertResponseIsSuccessful();
-
-        $itemRepository->clear();
-        $this->assertNull($itemRepository->find($id));
+        $newItem = $this->createItem($client);
+        $this->getItem($client);
+        $id = $this->updateItem($newItem, $client);
+        $this->deleteItem($id, $client);
     }
 
     public function testDoesNotDeleteOtherUserItem(): void
@@ -85,7 +56,7 @@ class ItemControllerTest extends WebTestCase
         $this->assertNotNull($johnItem->getId()); // when deletes - getId returns null
     }
 
-    private function update(Item $item, KernelBrowser $client): int
+    private function updateItem(Item $item, KernelBrowser $client): int
     {
         $data = 'very secure updated item data';
 
@@ -138,5 +109,46 @@ class ItemControllerTest extends WebTestCase
         ;
 
         return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    private function deleteItem(int $id, KernelBrowser $client)
+    {
+        $client->request('DELETE', '/item/' . $id);
+        $this->assertResponseIsSuccessful();
+
+        $itemRepository = $this->getItemRepository();
+
+        $this->assertNull($itemRepository->find($id));
+    }
+
+    private function createItem(KernelBrowser $client): Item
+    {
+        $data = 'very secure new item data';
+
+        $newItemData = ['data' => $data];
+
+        $latestItem = $this->findLatestItem();
+
+        $client->request('POST', '/item', $newItemData);
+
+        $newItem = $this->findLatestItem();
+
+        // checking if data is equal to what we posted is not enough, because older items could have same data.
+        // so checking if really new item with data was created
+        $this->assertTrue($newItem->getId() > $latestItem->getId());
+        $this->assertEquals($data, $newItem->getData());
+
+        return $newItem;
+    }
+
+    private function getItem(KernelBrowser $client)
+    {
+        $client->request('GET', '/item');
+
+        $this->assertResponseIsSuccessful();
+
+        $content = $client->getResponse()->getContent();
+
+        $this->assertStringContainsString('very secure new item data', $content);
     }
 }
