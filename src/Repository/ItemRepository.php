@@ -35,7 +35,6 @@ class ItemRepository extends ServiceEntityRepository
 
         $sql = "SELECT * FROM item WHERE user_id = :userId";
         $stmt = $conn->prepare($sql);
-//        $stmt->bindValue(, $id);
         $stmt->execute(['userId' => $user->getId()]);
 
         return $stmt->fetchAllAssociative();

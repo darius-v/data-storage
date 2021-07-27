@@ -30,24 +30,8 @@ class ItemController extends AbstractController
      */
     public function list(): JsonResponse
     {
-
-            $items = $this->getDoctrine()->getRepository(Item::class)->findBy(['user' => $this->getUser()]);
-            $allItems = [];
-            foreach ($items as $item) {
-                $oneItem['id'] = $item->getId();
-                $oneItem['data'] = $item->getData();
-                $oneItem['created_at'] = $item->getCreatedAt();
-                $oneItem['updated_at'] = $item->getUpdatedAt();
-                $allItems[] = $oneItem;
-            }
-
-//        $allItems = $this->itemService->list($this->getUser());
-
-
-//        $end = time();
-
-//        return $this->json(['time' => $end - $start]);
-
+        // With 71 record for the user this method is about 3x faster when using plain sql
+        $allItems = $this->itemService->list($this->getUser());
 
         return $this->json($allItems);
     }

@@ -149,6 +149,18 @@ class ItemControllerTest extends WebTestCase
 
         $content = $client->getResponse()->getContent();
 
-        $this->assertStringContainsString('very secure new item data', $content);
+        $listArray = json_decode($content, true);
+
+        $newItem = end($listArray);
+
+        $this->assertEquals('very secure new item data', $newItem['data']);
+
+        $this->assertArrayHasKey('date', $newItem['created_at']);
+        $this->assertArrayHasKey('timezone_type', $newItem['created_at']);
+        $this->assertArrayHasKey('timezone', $newItem['created_at']);
+
+        $this->assertArrayHasKey('date', $newItem['updated_at']);
+        $this->assertArrayHasKey('timezone_type', $newItem['updated_at']);
+        $this->assertArrayHasKey('timezone', $newItem['updated_at']);
     }
 }

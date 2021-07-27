@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Entity\Item;
 use App\Repository\ItemRepository;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -23,24 +24,16 @@ class ItemService
 
     public function list(UserInterface $user): array
     {
+        $items = $this->itemRepository->findByUser($user);
 
-
-//        for ($i=0; $i<10000; $i++) {
-
-            $items = $this->itemRepository->findByUser($user);
-
-//            dump($items);
-
-            $allItems = [];
-            foreach ($items as $item) {
-                $oneItem['id'] = $item['id'];
-                $oneItem['data'] = $item['data'];
-                $oneItem['created_at'] = $item['created_at'];
-                $oneItem['updated_at'] = $item['updated_at'];
-                $allItems[] = $oneItem;
-            }
-
-//        }
+        $allItems = [];
+        foreach ($items as $item) {
+            $oneItem['id'] = $item['id'];
+            $oneItem['data'] = $item['data'];
+            $oneItem['created_at'] = new DateTime($item['created_at']);
+            $oneItem['updated_at'] = new DateTime($item['updated_at']);
+            $allItems[] = $oneItem;
+        }
 
         return $allItems;
     }
