@@ -29,7 +29,17 @@ class ItemControllerTest extends WebTestCase
 
         $newItemData = ['data' => $data];
 
+        $latestItem = $this->findLatestItem();
+
         $client->request('POST', '/item', $newItemData);
+
+        $newItem = $this->findLatestItem();
+
+        // checking if data is equal to what we posted is not enough, because older items could have same data.
+        // so checking if really new item with data was created
+        $this->assertTrue($newItem->getId() > $latestItem->getId());
+        $this->assertEquals($data, $newItem->getData());
+
         $client->request('GET', '/item');
 
         $this->assertResponseIsSuccessful();
@@ -38,16 +48,7 @@ class ItemControllerTest extends WebTestCase
 
         $this->assertStringContainsString('very secure new item data', $content);
 
-        $listArray = json_decode($content);
-        dump($listArray);
-
-
-        /** @var Item $newItem */
-        $newItem = $itemRepository->findOneByData($data);   // todo finds wrong item when data is equal of other items
-
         $id = $this->update($newItem, $client);
-
-        $this->assertNotNull($newItem);
 
         $client->request('DELETE', '/item/' . $id);
         $this->assertResponseIsSuccessful();
@@ -126,5 +127,16 @@ class ItemControllerTest extends WebTestCase
     private function getEntityManager(): EntityManagerInterface
     {
         return static::$container->get(EntityManagerInterface::class);
+    }
+
+    private function findLatestItem(): ?Item
+    {
+        $qb = $this->getItemRepository()->createQueryBuilder('i');
+        $qb
+            ->orderBy('i.id', 'DESC')
+            ->setMaxResults(1)
+        ;
+
+        return $qb->getQuery()->getOneOrNullResult();
     }
 }
