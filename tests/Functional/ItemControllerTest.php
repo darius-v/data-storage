@@ -5,6 +5,7 @@ namespace App\Tests\Functional;
 use App\Entity\Item;
 use App\Entity\User;
 use App\Repository\ItemRepository;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use LogicException;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -54,6 +55,36 @@ class ItemControllerTest extends WebTestCase
         $this->deleteUser($tempUser);
 
         $this->assertNotNull($johnItem->getId()); // when deletes - getId returns null
+    }
+
+    public function testDeletePerformance()
+    {
+        $client = static::createClient();
+        $user = $this->getNewLoggedInUser($client);
+
+        $em = $this->getEntityManager();
+
+        $count = 100;
+        $conn = $em->getConnection();
+        for ($i=0; $i<$count; $i++) {
+            $conn->insert(
+                'item',
+                ['user_id' => $user->getId(), 'data' => 'test', 'created_at' => $this->now(), 'updated_at' => $this->now()]
+            );
+        }
+
+        $items = $this->getItemRepository()->findByUser($user);
+
+        $start = time();
+        foreach ($items as $item) {
+            $client->request('DELETE', '/item/' . $item['id']);
+        }
+        $deleteTime = time() - $start;
+
+        echo "Deleted $count items in $deleteTime seconds";
+        $this->assertTrue($deleteTime < 4);
+
+        $conn->delete('user', ['id' => $user->getId()]);
     }
 
     private function updateItem(Item $item, KernelBrowser $client): int
@@ -122,8 +153,11 @@ class ItemControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
 
         $itemRepository = $this->getItemRepository();
+        $itemRepository->clear();
 
-        $this->assertNull($itemRepository->find($id));
+        $item = $itemRepository->find($id);
+
+        $this->assertNull($item);
     }
 
     private function createItem(KernelBrowser $client): Item
@@ -167,5 +201,24 @@ class ItemControllerTest extends WebTestCase
         $this->assertArrayHasKey('date', $newItem['updated_at']);
         $this->assertArrayHasKey('timezone_type', $newItem['updated_at']);
         $this->assertArrayHasKey('timezone', $newItem['updated_at']);
+    }
+
+    private function getNewLoggedInUser(KernelBrowser $client): User
+    {
+        $user = new User();
+        $user->setUsername(time());
+        $user->setPassword('asd');
+        $em = $this->getEntityManager();
+        $em->persist($user);
+        $em->flush();
+
+        $client->loginUser($user);
+
+        return $user;
+    }
+
+    private function now(): string
+    {
+        return (new DateTime())->format('Y-m-d H:i:s');
     }
 }
