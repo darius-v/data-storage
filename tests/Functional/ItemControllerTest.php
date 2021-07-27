@@ -81,7 +81,7 @@ class ItemControllerTest extends WebTestCase
         }
         $deleteTime = time() - $start;
 
-        echo "Deleted $count items in $deleteTime seconds";
+        echo "Deleted $count items in $deleteTime seconds \n";
         $this->assertTrue($deleteTime < 4);
 
         $conn->delete('user', ['id' => $user->getId()]);

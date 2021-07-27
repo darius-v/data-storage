@@ -20,3 +20,53 @@ make tests
 ### Postman requests collection
 
 You can import all available API calls to Postman using `postman_collection.json` file
+
+# Api documentation
+
+**Login**
+----
+Logs user in.
+
+* **URL**
+
+  /login
+
+* **Method:**
+
+  `POST`
+
+* **Data Params**
+
+  `{
+  "username": "john",
+  "password": "maxsecure"
+  }`
+
+* **Success Response:**
+
+    * **Code:** 200 <br />
+      **Content:** `{
+      "username": "john",
+      "roles": [
+      "ROLE_USER"
+      ]
+      }`
+
+* **Error Response:**
+
+    * **Code:** 401 UNAUTHORIZED <br />
+      **Content:** `{
+      "error": "Invalid credentials."
+      }`
+
+* **Sample Call:**
+
+  ```
+    curl --location --request POST 'http://secure-storage.localhost:8000/login' \
+    --header 'Content-Type: application/json' \
+    --header 'Cookie: PHPSESSID=27ddba26ea7b3aa77d3a3e39a08284a6' \
+    --data-raw '{
+    "username": "john",
+    "password": "maxsecure"
+    }'
+  ```
