@@ -27,4 +27,13 @@ class SecurityController extends AbstractController
     public function logout()
     {
     }
+
+    /**
+     * POST - to not give error when running from curl
+     * @Route("/after-logout", name="after_logout", methods={"GET", "POST"})
+     */
+    public function afterLogout(): JsonResponse
+    {
+        return $this->json([]);
+    }
 }

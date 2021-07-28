@@ -70,3 +70,26 @@ Logs user in.
     "password": "maxsecure"
     }'
   ```
+
+**Logout**
+----
+Logs user out.
+
+* **URL**
+
+  /logout
+
+* **Method:**
+
+  `POST`
+
+* **Success Response:**
+
+    * **Code:** 200 <br />
+      **Content:** `[]`
+      
+* **Sample Call:**
+
+  ```
+    curl --location --quest POST 'http://secure-storage.localhost:8000/logout'
+  ```
