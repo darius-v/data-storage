@@ -23,6 +23,10 @@ You can import all available API calls to Postman using `postman_collection.json
 
 # Api documentation
 
+If you are trying to call endpoint which requires to be logged in, you will get 403 error:
+
+`{"error":"Unauthorized, you need to log in."}`
+
 **Login**
 ----
 Logs user in.
@@ -64,7 +68,6 @@ Logs user in.
   ```
     curl --location --request POST 'http://secure-storage.localhost:8000/login' \
     --header 'Content-Type: application/json' \
-    --header 'Cookie: PHPSESSID=27ddba26ea7b3aa77d3a3e39a08284a6' \
     --data-raw '{
     "username": "john",
     "password": "maxsecure"
@@ -91,5 +94,30 @@ Logs user out.
 * **Sample Call:**
 
   ```
-    curl --location --quest POST 'http://secure-storage.localhost:8000/logout'
+    curl --location --request POST 'http://secure-storage.localhost:8000/logout'
   ```
+
+**Get user items list**
+----
+Returns list of logged in user items.
+
+* **URL**
+
+  /item
+
+* **Method:**
+
+  `GET``
+
+* **Success Response:**
+
+    * **Code:** 200 <br />
+      **Content:** `[{"id":"13","data":"dar","created_at":{"date":"2021-07-22 08:02:41.000000","timezone_type":3,"timezone":"UTC"},"updated_at":{"date":"2021-07-27 07:17:58.000000","timezone_type":3,"timezone":"UTC"}}]`
+
+* **Sample Call:**
+
+  ```
+  curl --location --request GET 'http://secure-storage.localhost:8000/item' \
+    --header 'Cookie: PHPSESSID=fe9ceb2619e0a4df023b2fb24c49e126'
+  ```
+  
