@@ -154,3 +154,52 @@ Creates item.
     --header 'Cookie: PHPSESSID=f05616437e7e4207ee08277f5c2424fe' \
     --form 'data="new item secret"'
   ```
+
+**Update item**
+----
+Updates item.
+
+* **URL**
+
+  /item
+
+* **Method:**
+
+  `PUT`
+
+* **Data Params**
+
+  id: int
+  data: string
+
+* **Success Response:**
+
+    * **Code:** 200 <br />
+      **Content:** `{
+      "id": "13",
+      "data": "secret"
+      }`
+
+* **Error Response:**
+
+    * **Code:** 400 BAD REQUEST <br />
+      **Content:** `{
+      "error": "No id parameter"
+      }`
+
+  OR
+
+    * **Code:** 400 BAD REQUEST <br />
+      **Content:** `{
+      "error": "No data parameter"
+      }`
+
+* **Sample Call:**
+
+  ```
+  curl --location --request PUT 'http://secure-storage.localhost:8000/item' \
+    --header 'Content-Type: application/x-www-form-urlencoded' \
+    --header 'Cookie: PHPSESSID=f05616437e7e4207ee08277f5c2424fe' \
+    --data-urlencode 'id=13' \
+    --data-urlencode 'data=secret'
+  ```

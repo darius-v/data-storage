@@ -93,7 +93,7 @@ class ItemController extends AbstractController
 
         $itemService->update($this->getUser(), $id, $data);
 
-        return $this->json(['id' => $this->getUser(), $id, $data, 'data' => $data]);
+        return $this->json(['id' => $id, 'data' => $data]);
     }
 
     private function errorJson(string $message): JsonResponse
