@@ -120,4 +120,37 @@ Returns list of logged in user items.
   curl --location --request GET 'http://secure-storage.localhost:8000/item' \
     --header 'Cookie: PHPSESSID=fe9ceb2619e0a4df023b2fb24c49e126'
   ```
-  
+
+**Create item**
+----
+Creates item.
+
+* **URL**
+
+  /item
+
+* **Method:**
+
+  `POST`
+
+* **Data Params**
+
+  data: string
+
+* **Success Response:**
+
+    * **Code:** 200 <br />
+      **Content:** `[]`
+
+* **Error Response:**
+
+    * **Code:** 200 OK <br />
+      **Content:** `{"error": "No data parameter"}`
+
+  **Sample Call:**
+
+  ```
+  curl --location --request POST 'http://secure-storage.localhost:8000/item' \
+    --header 'Cookie: PHPSESSID=f05616437e7e4207ee08277f5c2424fe' \
+    --form 'data="new item secret"'
+  ```
