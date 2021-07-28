@@ -91,7 +91,7 @@ class ItemControllerTest extends WebTestCase
     {
         $data = 'very secure updated item data';
 
-        $updatedItemData = ['data' => $data, 'id' => $item->getId()];
+        $updatedItemData = ['data' => $data, 'id' => (string)$item->getId()];
 
         $client->request('PUT', '/item', $updatedItemData);
 
