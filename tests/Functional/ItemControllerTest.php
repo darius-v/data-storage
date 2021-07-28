@@ -153,7 +153,6 @@ class ItemControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
 
         $itemRepository = $this->getItemRepository();
-        $itemRepository->clear();
 
         $item = $itemRepository->find($id);
 
