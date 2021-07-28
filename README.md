@@ -203,3 +203,43 @@ Updates item.
     --data-urlencode 'id=13' \
     --data-urlencode 'data=secret'
   ```
+
+**Delete item**
+----
+Deletes item.
+
+* **URL**
+
+  /item/:id
+
+* **Method:**
+
+  `DELETE`
+
+*  **URL Params**
+
+   **Required:**
+
+   `id=[integer]`
+
+* **Success Response:**
+
+    * **Code:** 200 <br />
+      **Content:** `[]`
+
+* **Error Response:**
+
+    * **Code:** 400 BAD REQUEST <br />
+      **Content:** `{"error":"No data parameter"}`
+
+  OR
+
+    * **Code:** 400 BAD REQUEST <br />
+      **Content:** `{"error":"No item"}`
+
+* **Sample Call:**
+
+  ```
+  curl --location --request DELETE 'http://secure-storage.localhost:8000/item/122' \
+    --header 'Cookie: PHPSESSID=f05616437e7e4207ee08277f5c2424fe'   
+  ```
