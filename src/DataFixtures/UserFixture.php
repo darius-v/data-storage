@@ -2,17 +2,16 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Token;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserFixture extends Fixture
 {
     protected $encoder;
 
-    public function __construct(UserPasswordEncoderInterface $encoder)
+    public function __construct(UserPasswordHasherInterface $encoder)
     {
         $this->encoder = $encoder;
     }
@@ -22,7 +21,7 @@ class UserFixture extends Fixture
     {
         $user = new User();
         $user->setUsername('john');
-        $user->setPassword($this->encoder->encodePassword($user, 'maxsecure'));
+        $user->setPassword($this->encoder->hashPassword($user, 'maxsecure'));
 
         $manager->persist($user);
          
