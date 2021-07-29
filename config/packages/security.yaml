@@ -19,6 +19,6 @@ security:
                 check_path: /login
             entry_point: App\Security\AuthenticationEntryPoint
 
-    encoders:
+    password_hashers:
         App\Entity\User:
             algorithm: bcrypt
