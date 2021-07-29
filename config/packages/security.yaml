@@ -19,7 +19,17 @@ security:
             entry_point: App\Security\AuthenticationEntryPoint
 
     password_hashers:
-        App\Entity\User:
+
+        legacy:
             algorithm: bcrypt
+            encode_as_base64: false
+            iterations: 1
+
+        App\Entity\User:
+#            algorithm: bcrypt
+            algorithm: argon
+            migrate_from:
+                - bcrypt # uses the "bcrypt" hasher with the default options
 
     enable_authenticator_manager: true
+    erase_credentials: false
