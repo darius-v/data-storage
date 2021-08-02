@@ -6,7 +6,7 @@
 
 * Run `make init` to initialize project
 
-* Open in browser: http://secure-storage.localhost:8000/item Should get `Full authentication is required to access this resource.` error, because first you need to make `login` call (see `postman_collection.json` or `SecurityController` for more info).
+* Open in browser: http://secure-storage.localhost:8000/item . Should get error, because first you need to make `login` call (see `postman_collection.json` or `SecurityController` for more info).
 
 ### Run tests
 
