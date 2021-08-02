@@ -22,12 +22,12 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         parent::__construct($registry, User::class);
     }
 
-//    public function upgradePassword(UserInterface $user, string $newHashedPassword): void
-//    {
-//        // set the new hashed password on the User object
-//        $user->setPassword($newHashedPassword);
-//
-//        // execute the queries on the database
-//        $this->getEntityManager()->flush();
-//    }
+    public function upgradePassword(UserInterface $user, string $newHashedPassword): void
+    {
+        // set the new hashed password on the User object
+        $user->setPassword($newHashedPassword);
+
+        // execute the queries on the database
+        $this->getEntityManager()->flush();
+    }
 }

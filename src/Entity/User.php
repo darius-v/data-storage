@@ -8,8 +8,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
-use Symfony\Component\PasswordHasher\Hasher\PasswordHasherAwareInterface;
-use Symfony\Component\Security\Core\Encoder\EncoderAwareInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -22,7 +20,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ORM\HasLifecycleCallbacks
  */
-class User implements UserInterface, PasswordAuthenticatedUserInterface, PasswordHasherAwareInterface
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     /**
      * @ORM\Id()
@@ -37,12 +35,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Passwor
     private $username;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $oldPassword;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=255)
      */
     private $password;
 
@@ -142,9 +135,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Passwor
 
     public function getPassword(): string
     {
-//        file_put_contents('darius.txt', ';test'.json_encode($this->oldPassword), FILE_APPEND); die;
-
-        return null === $this->password ? $this->oldPassword : $this->password;
+        return $this->password;
     }
 
     public function getRoles(): array
@@ -182,30 +173,5 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Passwor
     public function getUserIdentifier(): string
     {
         return $this->username;
-    }
-
-    public function hasLegacyPassword(): bool
-    {
-        return null !== $this->oldPassword;
-    }
-
-    public function getPasswordHasherName(): ?string
-    {
-        if ($this->hasLegacyPassword()) {
-            // User is configured with a legacy password, make use of the legacy encoder
-            // configured in security.yml
-            return 'legacy';
-        }
-
-        // User is configured with the default password system, make use of the default encoder
-        return null;
-    }
-
-    /**
-     * @param mixed $oldPassword
-     */
-    public function setOldPassword($oldPassword): void
-    {
-        $this->oldPassword = $oldPassword;
     }
 }
