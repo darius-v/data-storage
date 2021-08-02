@@ -12,10 +12,6 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
- * When a user entity implements PasswordHasherAwareInterface, Symfony will call the getPasswordHasherName() method to
- * determine which encoder to use when the password is being checked.
- * If the method returns null, the default encoder is used.
- * All users can now log in, whether they are using the new algorithm or not.
  *
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ORM\HasLifecycleCallbacks
