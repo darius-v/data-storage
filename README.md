@@ -1,3 +1,5 @@
+# Warning - confidential, do not share.
+
 # Secure Information Storage REST API
 
 ### Project setup
