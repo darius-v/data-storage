@@ -39,7 +39,7 @@ class ItemController extends AbstractController
      * @Route("/item", name="item_create", methods={"POST"})
      * @IsGranted("ROLE_USER")
      */
-    public function create(Request $request, ItemService $itemService): JsonResponse
+    public function create(Request $request): JsonResponse
     {
         $data = $request->get('data');
 
@@ -48,7 +48,7 @@ class ItemController extends AbstractController
         }
 
         // 1000 iterations: 19s with doctrine, 6s with plain sql
-        $itemService->create($this->getUser(), $data);
+        $this->itemService->create($this->getUser(), $data);
 
         return $this->json([]);
     }
@@ -78,7 +78,7 @@ class ItemController extends AbstractController
      * @Route("/item", name="item_update", methods={"PUT"})
      * @IsGranted("ROLE_USER")
      */
-    public function update(Request $request, ItemService $itemService): JsonResponse
+    public function update(Request $request): JsonResponse
     {
         $id = $request->request->get('id');
         if (empty($id)) {
@@ -91,7 +91,7 @@ class ItemController extends AbstractController
             return $this->errorJson('No data parameter');
         }
 
-        $itemService->update($this->getUser(), $id, $data);
+        $this->itemService->update($this->getUser(), $id, $data);
 
         return $this->json(['id' => $id, 'data' => $data]);
     }
