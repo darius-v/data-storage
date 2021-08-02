@@ -18,9 +18,7 @@ class ItemControllerTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $userRepository = $this->getUserRepository();
-
-        $user = $userRepository->findOneByUsername('john');
+        $user = $this->findJohn();
         $client->loginUser($user);
 
         $newItem = $this->createItem($client);
@@ -33,22 +31,21 @@ class ItemControllerTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $userRepository = static::$container->get(UserRepository::class);
+        $userRepository = static::getContainer()->get(UserRepository::class);
 
         /** @var User $user */
         $user = $userRepository->findOneByUsername('john');
-        $johnItem = $user->getItems()->first();
 
-        if (!$johnItem) {
-            throw new LogicException('John should have item');
-        }
+        $this->makeSureUserHasItem($user);
+
+        $johnItem = $user->getItems()->first();
 
         // this user will try to delete John's item
         $tempUser = $this->createUser();
         $client->loginUser($tempUser);
 
         /** @var ItemRepository $itemRepository */
-        $itemRepository = static::$container->get(ItemRepository::class);
+        $itemRepository = static::getContainer()->get(ItemRepository::class);
         $johnItem = $itemRepository->find($johnItem->getId());
         $client->request('DELETE', '/item/' . $johnItem->getId());
 
@@ -123,17 +120,17 @@ class ItemControllerTest extends WebTestCase
 
     private function getItemRepository(): ItemRepository
     {
-        return static::$container->get(ItemRepository::class);
+        return static::getContainer()->get(ItemRepository::class);
     }
 
     private function getUserRepository(): UserRepository
     {
-        return static::$container->get(UserRepository::class);
+        return static::getContainer()->get(UserRepository::class);
     }
 
     private function getEntityManager(): EntityManagerInterface
     {
-        return static::$container->get(EntityManagerInterface::class);
+        return static::getContainer()->get(EntityManagerInterface::class);
     }
 
     private function findLatestItem(): ?Item
@@ -173,7 +170,8 @@ class ItemControllerTest extends WebTestCase
 
         // checking if data is equal to what we posted is not enough, because older items could have same data.
         // so checking if really new item with data was created
-        $this->assertTrue($newItem->getId() > $latestItem->getId());
+        $this->assertTrue(($latestItem === null && $newItem !== null) || // case when there are no items in database
+            $newItem->getId() > $latestItem->getId());  // case when there are items in db before running this test
         $this->assertEquals($data, $newItem->getData());
 
         return $newItem;
@@ -219,5 +217,24 @@ class ItemControllerTest extends WebTestCase
     private function now(): string
     {
         return (new DateTime())->format('Y-m-d H:i:s');
+    }
+
+    private function findJohn(): User
+    {
+        return $this->getUserRepository()->findOneByUsername('john');
+    }
+
+    private function makeSureUserHasItem(User $user)
+    {
+        if ($user->getItems()->count() === 0) {
+            $item = new Item();
+            $item->setData('makeSureUserHasItem');
+            $user->addItem($item);
+
+            $em = self::getEntityManager();
+            $em->persist($item);
+            $em->persist($user);
+            $em->flush();
+        }
     }
 }
