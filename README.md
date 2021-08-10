@@ -1,5 +1,8 @@
 # Secure Information Storage REST API
 
+# Todo
+* Move .env to .env.dist
+
 ### Project setup
 
 * Add `secure-storage.localhost` to your `/etc/hosts`: `127.0.0.1 secure-storage.localhost`
